@@ -1,0 +1,11 @@
+{
+  "name": "openclerk/jobs",
+  "require": {
+    "openclerk/db": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "Jobs\\": "src"
+    }
+  }
+}
