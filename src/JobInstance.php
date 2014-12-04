@@ -23,4 +23,12 @@ abstract class JobInstance {
    */
   abstract function run(\Db\Connection $db, \Db\Logger $logger);
 
+  function getArgument() {
+    return $this->params['arg'];
+  }
+
+  function getParameters() {
+    return $this->params;
+  }
+
 }
