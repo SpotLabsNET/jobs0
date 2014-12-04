@@ -29,7 +29,7 @@ class JobsQueuer {
       }
 
       // notify the job queuer that we've successfully inserted all of these queue jobs
-      $job_type->finishedQueue($pending);
+      $job_type->finishedQueue($db, $pending);
     }
 
     $logger->log("Complete");

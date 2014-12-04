@@ -16,7 +16,7 @@ class JobsRunner {
   function runOne(\Db\Connection $db, \Db\Logger $logger) {
     $job = $this->findJob($db);
     if ($job) {
-      $job_type = $mapper->findJobType($job['job_type']);
+      $job_type = $this->mapper->findJobType($job['job_type']);
       if (!$job_type) {
         throw new JobException("Could not find job type mapping for " . $job['job_type']);
       }

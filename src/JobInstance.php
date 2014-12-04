@@ -21,6 +21,6 @@ abstract class JobInstance {
   /**
    * Actual job logic.
    */
-  abstract function run(\Db\Connection $db, \Db\Logger $logger)
+  abstract function run(\Db\Connection $db, \Db\Logger $logger);
 
 }
