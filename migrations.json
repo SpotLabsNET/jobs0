@@ -1,3 +1,4 @@
 {
-  "\\Jobs\\JobMigrationBase": "\\Jobs\\JobMigrationBase"
+  "\\Jobs\\JobMigrationBase": "\\Jobs\\JobMigrationBase",
+  "\\Jobs\\JobExceptionsMigration": "\\Jobs\\JobExceptionsMigration"
 }
