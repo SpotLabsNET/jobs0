@@ -40,7 +40,7 @@ class JobsQueuer {
    */
   function insertJob(\Db\Connection $db, $job) {
     if (!isset($job['job_type'])) {
-      throw new JobException("No job_type found for " . print_r($job, true));
+      throw new JobException("No job_type defined in " . print_r($job, true));
     }
 
     $q = $db->prepare("INSERT INTO jobs SET job_type=:job_type,
