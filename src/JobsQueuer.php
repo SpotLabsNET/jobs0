@@ -2,6 +2,8 @@
 
 namespace Jobs;
 
+use \Monolog\Logger;
+
 class JobsQueuer {
 
   var $job_types;
@@ -15,14 +17,14 @@ class JobsQueuer {
    *
    * @throws JobException if something bad happened
    */
-  function doQueue(\Db\Connection $db, \Db\Logger $logger) {
-    $logger->log("Querying " . count($this->job_types) . " job types for pending jobs");
+  function doQueue(\Db\Connection $db, Logger $logger) {
+    $logger->info("Querying " . count($this->job_types) . " job types for pending jobs");
 
     foreach ($this->job_types as $job_type) {
       $pending = $job_type->getPending($db);
 
       if ($pending) {
-        $logger->log("Found " . count($pending) . " pending jobs for " . $job_type->getName());
+        $logger->info("Found " . count($pending) . " pending jobs for " . $job_type->getName());
         foreach ($pending as $job) {
           $this->insertJob($db, $job);
         }
@@ -32,7 +34,7 @@ class JobsQueuer {
       $job_type->finishedQueue($db, $pending);
     }
 
-    $logger->log("Complete");
+    $logger->info("Complete");
   }
 
   /**

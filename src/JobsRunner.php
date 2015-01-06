@@ -2,6 +2,8 @@
 
 namespace Jobs;
 
+use \Monolog\Logger;
+
 class JobsRunner {
 
   function __construct(JobTypeMapper $mapper) {
@@ -12,12 +14,12 @@ class JobsRunner {
    * Try run any one job that isn't executed or currently executing.
    * @return the job arguments that was run
    */
-  function runOne(\Db\Connection $db, \Db\Logger $logger) {
+  function runOne(\Db\Connection $db, Logger $logger) {
     $job = $this->findJob($db);
     if ($job) {
       $this->run($job, $db, $logger);
     } else {
-      $logger->log("No jobs found");
+      $logger->info("No jobs found");
     }
     return $job;
   }
@@ -26,7 +28,7 @@ class JobsRunner {
    * Run a specific job.
    * @return the job arguments that was run
    */
-  function runJob($id, \Db\Connection $db, \Db\Logger $logger) {
+  function runJob($id, \Db\Connection $db, Logger $logger) {
     $q = $db->prepare("SELECT * FROM jobs WHERE id=? LIMIT 1");
     $q->execute(array($id));
     $job = $q->fetch();
@@ -34,7 +36,7 @@ class JobsRunner {
     if ($job) {
       $this->run($job, $db, $logger);
     } else {
-      $logger->log("No jobs found");
+      $logger->info("No jobs found");
     }
     return $job;
   }
@@ -45,7 +47,7 @@ class JobsRunner {
    * TODO failed job logic
    * @return the job arguments that was run
    */
-  function run($job, \Db\Connection $db, \Db\Logger $logger) {
+  function run($job, \Db\Connection $db, Logger $logger) {
     $job_type = $this->mapper->findJobType($job['job_type']);
     if (!$job_type) {
       throw new JobException("Could not find job type mapping for " . $job['job_type']);
@@ -64,7 +66,7 @@ class JobsRunner {
       $q = $db->prepare("UPDATE jobs SET is_executing=0, is_executed=1, executed_at=NOW() WHERE id=? LIMIT 1");
       $q->execute(array($job['id']));
 
-      $logger->log("Complete");
+      $logger->info("Complete");
     } catch (Exception $e) {
       $logger->error($e->getMessage());
 

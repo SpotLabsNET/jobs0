@@ -1,7 +1,9 @@
 {
   "name": "openclerk/jobs",
   "require": {
-    "openclerk/db": "dev-master"
+    "openclerk/db": "dev-master",
+    "openclerk/events": "dev-master",
+    "monolog/monolog": "~1.12"
   },
   "autoload": {
     "psr-4": {
