@@ -67,7 +67,7 @@ class JobsRunner {
       $q->execute(array($job['id']));
 
       $logger->info("Complete");
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
       $logger->error($e->getMessage());
 
       $q = $db->prepare("INSERT INTO job_exceptions SET job_id=:job_id,
