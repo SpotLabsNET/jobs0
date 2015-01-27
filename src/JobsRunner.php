@@ -45,6 +45,9 @@ class JobsRunner {
    * Try run a particular job.
    * TODO timeout logic
    * TODO failed job logic
+   * Calls {@link log_uncaught_exception()} if the function exists. TODO this should actually be an event?
+   *
+   * @throws JobException wrapping any exception that occured
    * @return the job arguments that was run
    */
   function run($job, \Db\Connection $db, Logger $logger) {
@@ -68,8 +71,14 @@ class JobsRunner {
 
       $logger->info("Complete");
     } catch (\Exception $e) {
+      // it failed
       $logger->error($e->getMessage());
 
+      // mark the job as failed
+      $q = $db->prepare("UPDATE jobs SET is_executing=0, is_error=1, executed_at=NOW() WHERE id=? LIMIT 1");
+      $q->execute(array($job['id']));
+
+      // insert in a job_exception
       $q = $db->prepare("INSERT INTO job_exceptions SET job_id=:job_id,
         class_name=:class_name,
         message=:message,
@@ -82,11 +91,14 @@ class JobsRunner {
         "filename" => $e->getFile(),
         "line_number" => $e->getLine(),
       ));
-      $this->insertException($db, $job, $e);
 
-      // it failed
-      $q = $db->prepare("UPDATE jobs SET is_executing=0, is_error=1, executed_at=NOW() WHERE id=? LIMIT 1");
-      $q->execute(array($job['id']));
+      // log the exception (e.g. with openclerk/exceptions) if possible
+      if (function_exists('log_uncaught_exception')) {
+        log_uncaught_exception($e, "job", $job['id']);
+      }
+
+      // now throw it
+      throw new JobException($e->getMessage(), $e);
     }
   }
 

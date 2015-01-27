@@ -15,7 +15,7 @@ class JobsQueuer {
   /**
    * Go through all possible jobs and queue up all necessary jobs.
    *
-   * @throws JobException if something bad happened
+   * @throws JobQueuerException if something bad happened
    */
   function doQueue(\Db\Connection $db, Logger $logger) {
     $logger->info("Querying " . count($this->job_types) . " job types for pending jobs");
@@ -38,11 +38,11 @@ class JobsQueuer {
   }
 
   /**
-   * @throws JobException if something bad happened
+   * @throws JobQueuerException if something bad happened
    */
   function insertJob(\Db\Connection $db, $job) {
     if (!isset($job['job_type'])) {
-      throw new JobException("No job_type defined in " . print_r($job, true));
+      throw new JobQueuerException("No job_type defined in " . print_r($job, true));
     }
 
     $q = $db->prepare("INSERT INTO jobs SET job_type=:job_type,
